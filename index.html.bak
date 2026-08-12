@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nama Kamu — Video Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+<style>
+
+/* =====================================================================
+   PALET WARNA & TIPOGRAFI
+   Biru = warna interaktif. Merah = indikator status/rec.
+   'Silkscreen' dipakai khusus buat heading section Proyek (efek pixel/
+   blocky terinspirasi referensi dark-mu).
+   ===================================================================== */
+:root{
+  --bg: #101216;
+  --surface: #1a1d24;
+  --surface-2: #212530;
+  --border: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.16);
+  --text-primary: #f0eee8;
+  --text-secondary: #9d9d9a;
+  --text-muted: #676669;
+
+  --accent: #3d8ef2;
+  --accent-2: #7c5cff;
+  --accent-dim: rgba(61,142,242,0.14);
+  --accent-text: #7fb4f8;
+  --rec: #ef4a4a;
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-pixel: 'Silkscreen', var(--font-display);
+  --radius: 10px;
+  --shadow-card: 0 1px 2px rgba(0,0,0,0.3), 0 10px 28px rgba(0,0,0,0.28);
+  --shadow-glow: 0 0 0 1px var(--accent), 0 6px 24px rgba(61,142,242,0.22);
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+html{ zoom:1.4; }
+body{
+  background:
+    radial-gradient(circle at 12% -8%, rgba(61,142,242,0.10), transparent 42%),
+    radial-gradient(circle at 88% 4%, rgba(124,92,255,0.08), transparent 40%),
+    var(--bg);
+  color:var(--text-primary);
+  font-family:var(--font-body);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  position:relative;
+}
+body::before{
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size:36px 36px;
+}
+a{ color:inherit; text-decoration:none; }
+img{ max-width:100%; display:block; }
+::selection{ background:var(--accent-dim); color:var(--accent-text); }
+
+/* ============ NAVBAR ============ */
+.navbar{
+  position:sticky; top:0; z-index:50;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 32px;
+  background:rgba(16,18,22,0.82);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.navbar-name{ font-family:var(--font-display); font-weight:700; font-size:16px; display:flex; align-items:center; gap:9px; }
+.rec-dot{ width:7px; height:7px; border-radius:50%; background:var(--rec); box-shadow:0 0 8px rgba(239,74,74,0.7); animation:pulse 2s ease-in-out infinite; }
+@keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+.navbar-cta{
+  font-size:13px; font-weight:600; padding:10px 20px; color:#fff;
+  background:var(--accent); border-radius:999px; box-shadow:0 2px 12px rgba(61,142,242,0.28);
+  transition:transform .15s, box-shadow .15s, background .15s;
+}
+.navbar-cta:hover{ background:#5a9ff5; box-shadow:0 4px 18px rgba(61,142,242,0.4); transform:translateY(-1px); }
+
+.wrap{ max-width:1120px; margin:0 auto; padding:0 32px 90px; }
+
+/* ============ LABEL BERNOMOR (dipakai di semua judul section) ============ */
+.numbered-label{
+  display:flex; align-items:baseline; gap:9px; font-family:var(--font-mono);
+  font-size:12px; text-transform:uppercase; letter-spacing:0.07em;
+  color:var(--text-secondary); margin-bottom:18px;
+}
+.numbered-label .num{ color:var(--accent-text); }
+.numbered-label.on-dark{ color:rgba(255,255,255,0.55); }
+.numbered-label.on-dark .num{ color:#9cc4ff; }
+
+/* ============ HERO: ABOUT ME ============ */
+.hero-about{
+  display:grid; grid-template-columns:320px 1fr; gap:52px; align-items:center;
+  padding:52px 0 44px;
+}
+.hero-photo{
+  border-radius:18px; overflow:hidden; border:1px solid var(--border);
+  box-shadow:var(--shadow-card); background:var(--surface-2);
+}
+.hero-photo img{ width:100%; aspect-ratio:3/4; object-fit:cover; }
+.hero-name{
+  font-family:var(--font-display); font-weight:700; letter-spacing:-0.01em;
+  font-size:clamp(34px, 5vw, 58px); line-height:1.04; margin-bottom:18px;
+  text-shadow:0 0 18px rgba(61,142,242,0.35), 0 0 42px rgba(124,92,255,0.18);
+}
+.hero-bio{ font-size:14.5px; color:var(--text-secondary); max-width:580px; margin-bottom:26px; }
+.hero-meta-row{ display:flex; flex-wrap:wrap; gap:30px; margin-bottom:22px; }
+.meta-item{ display:flex; flex-direction:column; gap:4px; }
+.meta-label{ font-size:10.5px; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); }
+.meta-value{ font-size:13.5px; font-weight:600; display:flex; align-items:center; gap:6px; }
+.hero-skills{ display:flex; flex-wrap:wrap; gap:7px; margin-bottom:22px; }
+.skill-tag{
+  font-size:11px; font-family:var(--font-mono); color:var(--accent-text);
+  border:1px solid var(--accent-dim); background:rgba(61,142,242,0.06);
+  padding:5px 11px; border-radius:6px;
+}
+.hero-socials{ display:flex; flex-wrap:wrap; gap:10px; }
+.social-chip{
+  display:flex; align-items:center; gap:9px; padding:10px 18px;
+  border:1px solid var(--border); background:var(--surface); border-radius:999px;
+  font-size:12.5px; font-weight:500; cursor:pointer;
+  transition:all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.social-chip i{ font-size:16px; transition:color 0.2s ease; }
+
+/* Warna Brand & Hover Dynamic */
+.social-chip.chip-tiktok i{ color:#00f2fe; }
+.social-chip.chip-tiktok:hover{
+  border-color:#00f2fe; color:#fff; transform:translateY(-3px);
+  box-shadow:0 6px 20px rgba(0, 242, 254, 0.35);
+  background:rgba(0, 242, 254, 0.06);
+}
+
+.social-chip.chip-instagram i{ color:#e1306c; }
+.social-chip.chip-instagram:hover{
+  border-color:#e1306c; color:#fff; transform:translateY(-3px);
+  box-shadow:0 6px 20px rgba(225, 48, 108, 0.35);
+  background:rgba(225, 48, 108, 0.06);
+}
+
+.social-chip.chip-discord i{ color:#5865f2; }
+.social-chip.chip-discord:hover{
+  border-color:#5865f2; color:#fff; transform:translateY(-3px);
+  box-shadow:0 6px 20px rgba(88, 101, 242, 0.35);
+  background:rgba(88, 101, 242, 0.06);
+}
+
+/* ============ PENGALAMAN (stats) ============ */
+.about-text{ font-size:13.5px; color:var(--text-secondary); max-width:640px; margin-bottom:20px; }
+.stats-row{ display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-bottom:48px; }
+.stat-card{
+  background:linear-gradient(180deg, var(--surface), var(--surface-2));
+  border:1px solid var(--border); border-radius:var(--radius);
+  padding:18px; text-align:center; box-shadow:var(--shadow-card);
+}
+.stat-value{ font-family:var(--font-display); font-weight:700; font-size:25px; color:var(--accent-text); }
+.stat-label{ font-size:11px; color:var(--text-secondary); margin-top:5px; font-family:var(--font-mono); }
+
+/* ============ HEADING PROYEK (pixel font, efek neon) ============ */
+.projects-heading{
+  font-family:var(--font-pixel); font-weight:700;
+  font-size:clamp(26px, 4.2vw, 44px); color:#eaf3ff; text-transform:uppercase;
+  letter-spacing:0.01em; margin-bottom:20px; text-align:center;
+  text-shadow:
+    0 0 8px rgba(125,180,248,0.8),
+    0 0 20px rgba(61,142,242,0.55),
+    0 0 44px rgba(124,92,255,0.35);
+  animation:neonFlicker 5s ease-in-out infinite;
+}
+@keyframes neonFlicker{
+  0%, 92%, 100%{ opacity:1; }
+  93%{ opacity:0.82; }
+  95%{ opacity:1; }
+  96%{ opacity:0.88; }
+}
+
+/* ============ FILTER ============ */
+.filter-row{ display:flex; justify-content:center; gap:8px; margin-bottom:28px; flex-wrap:wrap; }
+.filter-btn{
+  font-size:12.5px; font-weight:500; padding:8px 18px; border-radius:999px;
+  border:1px solid var(--border); color:var(--text-secondary);
+  cursor:pointer; background:var(--surface); font-family:var(--font-body);
+  transition:all .15s;
+}
+.filter-btn:hover{ border-color:var(--border-strong); color:var(--text-primary); }
+.filter-btn.active{ background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 3px 14px rgba(61,142,242,0.35); }
+
+/* ============ GRID PROYEK (CENTERED) ============ */
+.subsection-label{
+  font-size:11px; color:var(--text-muted); font-family:var(--font-mono);
+  text-transform:uppercase; letter-spacing:0.06em; margin:24px 0 14px; text-align:center;
+}
+.subsection-label:first-of-type{ margin-top:0; }
+.project-grid{ display:flex; flex-wrap:wrap; justify-content:center; gap:24px; }
+.video-grid{ margin-bottom:32px; }
+.video-grid .project-card{ flex-shrink:0; transition:width 0.2s ease; }
+.video-grid .project-card.card-916{ width:220px; }
+.video-grid .project-card.card-169{ width:320px; }
+.thumb-grid{ margin-bottom:48px; }
+.thumb-grid .project-card{ width:280px; flex-shrink:0; }
+
+/* ============ KARTU VIDEO - INLINE IFRAME ============ */
+.video-card{
+  position:relative; width:100%; aspect-ratio:9/16; border-radius:14px; overflow:hidden;
+  background:#000; cursor:pointer;
+  border:1px solid var(--border-strong); box-shadow:var(--shadow-card);
+  transition:border-color 0.25s, box-shadow 0.25s, transform 0.25s, aspect-ratio 0.2s ease;
+}
+.video-card.ratio-916{ aspect-ratio:9/16 !important; }
+.video-card.ratio-169{ aspect-ratio:16/9 !important; }
+.video-card:hover{
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent), 0 12px 36px rgba(61,142,242,0.32);
+}
+
+/* iframe & video langsung di dalam kartu */
+.video-card iframe,
+.video-card video{
+  position:absolute; top:0; left:0;
+  width:100%; height:100%; border:none; background:#000;
+  object-fit:cover; pointer-events:auto; overflow:hidden !important;
+  scrollbar-width:none !important; -ms-overflow-style:none !important;
+}
+.video-card iframe::-webkit-scrollbar{
+  display:none !important; width:0 !important; height:0 !important;
+}
+
+.video-card.vc-ig iframe,
+.video-card.vc-tt iframe,
+.video-card.vc-yt iframe{
+  width:100%; height:100%; top:0; left:0;
+}
+
+.video-card.vc-mp4 video{
+  width:100%; height:100%; object-fit:cover; display:block;
+}
+
+/* Nonaktifkan cursor-glow & tilt di HP/touchscreen */
+@media (hover: none), (max-width: 768px) {
+  .cursor-glow { display: none !important; }
+  .tilt-card { transform: none !important; box-shadow: var(--shadow-card) !important; }
+  .video-grid .project-card { width: 100%; max-width: 280px; }
+}
+
+/* Badge platform pojok kiri atas */
+.video-card-badge{
+  position:absolute; top:10px; left:10px; z-index:20;
+  display:flex; align-items:center; gap:6px;
+  padding:5px 11px; border-radius:999px; font-size:10.5px; font-weight:600;
+  font-family:var(--font-mono); background:rgba(10,10,14,0.82);
+  backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.14);
+  color:#fff; pointer-events:none; box-shadow:0 2px 10px rgba(0,0,0,0.4);
+  transition:all 0.2s ease;
+}
+.video-card-badge.instagram i{ color:#e1306c; }
+.video-card-badge.tiktok i{ color:#00f2fe; }
+.video-card-badge.youtube i{ color:#ff4444; }
+.video-card:hover .video-card-badge{ border-color:var(--accent); }
+
+/* Judul di bawah kartu */
+.video-card-title{
+  font-size:12px; font-weight:600; color:#fff;
+  font-family:var(--font-display); text-shadow:0 1px 4px rgba(0,0,0,0.6);
+}
+
+.project-card{ cursor:default; }
+.project-thumb{
+  position:relative; border-radius:8px; overflow:hidden; background:var(--surface-2);
+  border:1px solid rgba(255,255,255,0.1); box-shadow:0 10px 24px rgba(0,0,0,0.35);
+  transition:border-color .18s, box-shadow .18s, transform .18s; cursor:pointer;
+}
+.project-thumb.ratio-916{ aspect-ratio:9/16; }
+.project-thumb.ratio-169{ aspect-ratio:16/9; }
+.project-thumb img{ width:100%; height:100%; object-fit:cover; transition:transform .3s ease; }
+.project-thumb:hover{ border-color:var(--accent); transform:translateY(-2px); box-shadow:var(--shadow-glow); }
+.project-thumb:hover img{ transform:scale(1.06); }
+.project-play{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(180deg, rgba(16,18,22,0) 45%, rgba(16,18,22,0.55) 100%);
+  opacity:0; transition:opacity .18s;
+}
+.project-play i{ font-size:20px; color:#fff; background:rgba(61,142,242,0.85); border-radius:50%; padding:11px; box-shadow:0 4px 14px rgba(0,0,0,0.35); }
+.project-thumb:hover .project-play{ opacity:1; }
+.project-meta{ margin-top:10px; display:flex; align-items:center; justify-content:space-between; }
+.project-title{ font-size:13px; font-weight:600; color:var(--text-primary); font-family:var(--font-display); }
+.project-meta{ margin-top:10px; display:flex; align-items:center; justify-content:space-between; }
+.project-title{ font-size:13px; font-weight:600; color:var(--text-primary); font-family:var(--font-display); }
+
+/* ============ SCROLL PROGRESS BAR ============ */
+.scroll-bar{
+  position:fixed; top:0; left:0; height:2px; z-index:999; width:0%;
+  background:linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent));
+  background-size:200% 100%; animation:barShimmer 2s linear infinite;
+  box-shadow:0 0 10px rgba(61,142,242,0.8), 0 0 20px rgba(61,142,242,0.4);
+  transition:width .1s linear;
+}
+@keyframes barShimmer{ 0%{background-position:0 0} 100%{background-position:200% 0} }
+
+/* ============ CURSOR GLOW ============ */
+.cursor-glow{
+  position:fixed; pointer-events:none; z-index:9998;
+  width:380px; height:380px; border-radius:50%;
+  background:radial-gradient(circle, rgba(61,142,242,0.07) 0%, transparent 68%);
+  transform:translate(-50%,-50%); transition:opacity .4s ease;
+  opacity:0;
+}
+
+/* ============ VIDEO MODAL (IN-PAGE) ============ */
+.vmodal-overlay{
+  position:fixed; inset:0; z-index:500;
+  background:rgba(4,5,8,0.9); backdrop-filter:blur(12px);
+  display:none; align-items:center; justify-content:center;
+  padding:20px; opacity:0; transition:opacity .25s ease;
+}
+.vmodal-overlay.open{ display:flex; }
+.vmodal-overlay.visible{ opacity:1; }
+.vmodal-box{
+  position:relative; width:min(360px, 90vw);
+  background:#000; border-radius:18px; overflow:hidden;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.08), 0 30px 80px rgba(0,0,0,0.7);
+  animation:vmodalIn .3s cubic-bezier(0.16,1,0.3,1);
+  transition:width .2s ease;
+}
+.vmodal-box.img-box{
+  width:min(860px, 92vw);
+}
+@keyframes vmodalIn{ from{transform:scale(0.88) translateY(20px)} to{transform:scale(1) translateY(0)} }
+
+/* === CROP CONTAINER — cuts IG header & footer === */
+.vmodal-crop{
+  position:relative; width:100%; overflow:hidden;
+  height:520px; /* tall enough for video portion */
+  background:#000;
+}
+.vmodal-crop.ig iframe{
+  position:absolute; left:0; width:100%; border:none;
+  height:200%; top:-62px; /* skip IG profile header */
+  pointer-events:auto; background:#000;
+}
+.vmodal-crop.tt iframe{
+  position:absolute; left:0; width:100%; border:none;
+  height:160%; top:-40px;
+  pointer-events:auto; background:#000;
+}
+.vmodal-crop.yt iframe{
+  position:absolute; inset:0; width:100%; height:100%; border:none;
+}
+.vmodal-crop.mp4 video{
+  width:100%; height:100%; display:block; object-fit:cover; background:#000;
+}
+/* Gradient mask — covers any stray IG pixels at top/bottom */
+.vmodal-crop::before, .vmodal-crop::after{
+  content:""; position:absolute; left:0; right:0; z-index:10; pointer-events:none;
+}
+.vmodal-crop::before{ top:0; height:10px; background:linear-gradient(#000, transparent); }
+.vmodal-crop::after{ bottom:0; height:10px; background:linear-gradient(transparent, #000); }
+
+.vmodal-close{
+  position:absolute; top:14px; right:14px; z-index:20;
+  width:36px; height:36px; border-radius:50%;
+  background:rgba(16,18,22,0.88); backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.16);
+  color:#fff; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:all .15s; font-size:16px;
+}
+.vmodal-close:hover{ background:var(--accent); border-color:var(--accent); }
+
+/* ============ 3D TILT EFFECT ON CARDS ============ */
+.tilt-card{ transform-style:preserve-3d; transition:transform .15s ease, box-shadow .15s ease; }
+
+/* ============ FOOTER KONTAK ============ */
+.footer{ border-top:1px solid var(--border); padding-top:32px; text-align:center; }
+.footer-title{ font-family:var(--font-display); font-weight:700; font-size:20px; margin-bottom:6px; }
+.footer-sub{ font-size:13px; color:var(--text-secondary); margin-bottom:22px; }
+.footer-links{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+.footer-link{
+  display:flex; align-items:center; gap:7px; font-size:13px; font-weight:500;
+  border:1px solid var(--border); background:var(--surface); padding:10px 18px; border-radius:999px;
+  text-decoration:none; color:var(--text-primary);
+  transition:all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.footer-link i{ font-size:16px; }
+.footer-link.fl-tiktok i{ color:#00f2fe; }
+.footer-link.fl-tiktok:hover{ border-color:#00f2fe; transform:translateY(-3px); box-shadow:0 6px 20px rgba(0, 242, 254, 0.35); }
+
+.footer-link.fl-instagram i{ color:#e1306c; }
+.footer-link.fl-instagram:hover{ border-color:#e1306c; transform:translateY(-3px); box-shadow:0 6px 20px rgba(225, 48, 108, 0.35); }
+
+.footer-link.fl-discord i{ color:#5865f2; }
+.footer-link.fl-discord:hover{ border-color:#5865f2; transform:translateY(-3px); box-shadow:0 6px 20px rgba(88, 101, 242, 0.35); }
+.footer-copy{ margin-top:34px; font-size:11px; color:var(--text-muted); font-family:var(--font-mono); }
+
+/* ============ TOAST NOTIFICATION ============ */
+.toast-msg{
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(30px);
+  background:rgba(18,20,28,0.94); backdrop-filter:blur(12px);
+  border:1px solid #5865f2; color:#fff; font-family:var(--font-mono);
+  font-size:12px; padding:12px 22px; border-radius:999px; z-index:9999;
+  box-shadow:0 10px 30px rgba(88,101,242,0.4); opacity:0; pointer-events:none;
+  transition:all 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.toast-msg.show{
+  opacity:1; transform:translateX(-50%) translateY(0);
+}
+
+/* ============ REVEAL ON SCROLL ============ */
+.reveal{ opacity:0; transform:translateY(24px); transition:opacity .6s ease, transform .6s ease; }
+.reveal.reveal-visible{ opacity:1; transform:translateY(0); }
+.reveal-stagger .reveal-item{ opacity:0; transform:translateY(18px); transition:opacity .5s ease, transform .5s ease; }
+.reveal-stagger.reveal-visible .reveal-item{ opacity:1; transform:translateY(0); }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 800px){
+  .hero-about{ grid-template-columns:1fr; padding-top:36px; text-align:left; }
+  .hero-photo{ max-width:220px; margin-bottom:8px; }
+  .video-grid{ grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); }
+  .thumb-grid{ grid-template-columns:1fr 1fr; }
+  .stat-value{ font-size:19px; }
+  .wrap{ padding:0 18px 70px; }
+  .navbar{ padding:14px 18px; }
+}
+@media (max-width: 460px){
+  .thumb-grid{ grid-template-columns:1fr; }
+  .hero-meta-row{ gap:20px; }
+}
+</style>
+</head>
+<body>
+<div class="scroll-bar" id="scroll-bar"></div>
+<div class="cursor-glow" id="cursor-glow"></div>
+<div class="toast-msg" id="toast-msg"></div>
+
+<!-- ===== VIDEO MODAL IN-PAGE ===== -->
+<div class="vmodal-overlay" id="vmodal" onclick="vmodalClose(event)">
+  <div class="vmodal-box">
+    <div class="vmodal-close" onclick="closeVmodal()"><i class="ti ti-x"></i></div>
+    <div class="vmodal-crop" id="vmodal-crop"></div>
+  </div>
+</div>
+
+<nav class="navbar">
+  <div class="navbar-name"><span class="rec-dot"></span><span id="nav-name">Nama Kamu</span></div>
+  <a class="navbar-cta" href="https://discord.com/users/723016020817608814" onclick="openDiscordLink(event)">Hubungi aku</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- ============ HERO: ABOUT ME ============ -->
+  <section class="hero-about reveal">
+    <div class="hero-photo"><img id="avatar-img" src="" alt="Foto profil"></div>
+    <div>
+      <div class="numbered-label"><span class="num">(01)</span><span>About me</span></div>
+      <h1 class="hero-name" id="profile-name">Nama Kamu</h1>
+      <p class="hero-bio" id="bio-text"></p>
+      <div class="hero-meta-row">
+        <div class="meta-item">
+          <span class="meta-label">Role</span>
+          <span class="meta-value" id="profile-role"></span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Status</span>
+          <span class="meta-value"><span class="rec-dot"></span><span id="status-text"></span></span>
+        </div>
+      </div>
+      <div class="hero-skills" id="skills-list"></div>
+      <div class="hero-socials">
+        <div class="social-chip chip-tiktok" id="social-tiktok"><i class="ti ti-brand-tiktok"></i><span>TikTok</span></div>
+        <div class="social-chip chip-instagram" id="social-instagram"><i class="ti ti-brand-instagram"></i><span>Instagram</span></div>
+        <div class="social-chip chip-discord" id="social-discord"><i class="ti ti-brand-discord"></i><span>Chat di Discord</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PENGALAMAN ============ -->
+  <section class="reveal">
+    <div class="numbered-label"><span class="num">(02)</span><span>Pengalaman</span></div>
+    <p class="about-text" id="about-text"></p>
+    <div class="stats-row" id="stats-row"></div>
+  </section>
+
+  <!-- ============ PROYEK ============ -->
+  <div class="numbered-label reveal" style="justify-content:center;"><span class="num">(03)</span><span>Proyek</span></div>
+  <div class="projects-heading reveal" id="projects-heading">Project.exe</div>
+  <div class="filter-row reveal" id="filter-row">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="video">Video</button>
+    <button class="filter-btn" data-filter="thumbnail">Thumbnail</button>
+  </div>
+
+  <div id="video-section" class="reveal-stagger">
+    <div class="subsection-label">Video</div>
+    <div class="project-grid video-grid" id="video-grid"></div>
+  </div>
+
+  <div id="thumbnail-section" class="reveal-stagger">
+    <div class="subsection-label">Thumbnail</div>
+    <div class="project-grid thumb-grid" id="thumbnail-grid"></div>
+  </div>
+
+  <!-- ============ KONTAK ============ -->
+  <footer class="footer reveal" id="kontak" style="margin-top:48px;">
+    <div class="numbered-label" style="justify-content:center;"><span class="num">(04)</span><span>Kontak</span></div>
+    <div class="footer-title">Siap bikin sesuatu yang keren?</div>
+    <div class="footer-sub">Hubungi aku lewat salah satu platform di bawah ini.</div>
+    <div class="footer-links" id="footer-links"></div>
+    <div class="footer-copy" id="footer-copy"></div>
+  </footer>
+</div>
+
+<script>
+/* =====================================================================
+   CONFIG — SEMUA DATA PROFIL ADA DI SINI
+   ===================================================================== */
+const CONFIG = {
+  name: "AHMAD FARROS SABILLAH",
+  role: "Video editor — style .exe",
+  status: "Open commission",
+  avatar: "587287065_17919341073220112_6776170849672574104_n.jpg",
+  bio: "seorang content creator yang lagi merintis dan juga jago entertaiment dan ngedit ala ala exe xixi salken semua.",
+  skills: ["Premiere Pro", "After Effects", "Alight Motion", "Style .exe"],
+  socials: {
+    tiktok:    { url: "https://www.tiktok.com/@farozsabillah" },
+    instagram: { url: "https://www.instagram.com/farozsabillah/" },
+    discord:   { url: "https://discord.com/users/723016020817608814" }
+  },
+  experience: {
+    about: "Sudah 2 tahun lebih terjun di dunia video editing, fokus di style .exe untuk konten short & long-form. Terbiasa kerja sama beberapa kreator dengan deadline yang jelas dan hasil yang konsisten.",
+    stats: [
+      { value: "2+", label: "Tahun editing" },
+      { value: "3+", label: "Kreator kolaborasi" },
+      { value: "7",  label: "Hari kerja max" }
+    ]
+  },
+  projectsHeading: "Projek yang aku buat"
+};
+
+/* =====================================================================
+   PROYEK — INI BAGIAN YANG PALING SERING KAMU UPDATE
+
+   PROJECTS_VIDEO      -> kartu vertikal (short video/reels)
+   PROJECTS_THUMBNAIL  -> kartu horizontal (thumbnail YouTube dll)
+
+   CARA NAMBAH PROYEK BARU:
+   - Taruh file .mp4 ke folder videos/ lalu tulis: { link: "videos/namafile.mp4" }
+   - Atau pakai link TikTok/IG/YouTube langsung
+   - Judul otomatis diambil dari nama file (underscore → spasi, title case)
+   - Bisa juga tulis manual: { title: "Judul Custom", link: "videos/xxx.mp4" }
+   ===================================================================== */
+
+const CONFIG_SHEET_CSV_URL = ""; // <- tempel link CSV Google Sheet di sini kalau sudah siap
+
+let PROJECTS_VIDEO = [
+  { link: "videos/videoplayback.mp4" },
+  { link: "videos/SaveClip.App_AQMUp6Xmrlpv_TU0KNk04MlJ6U0Cfir8ryhWZfvf3cD5Qq0rUcvTZrlK49fTPJHrIfuA_EaCzx4Idw_oSt0Mpcbf.mp4" },
+  { link: "videos/SaveClip.App_AQP_qm67xQwACL70A5Glkm72rzmBJ4MhDlVL_HsPn9i-cAPlDl51dka-UnjlxoVXy_u0EFB13Z3PZJfu_ujUBRSjR4Wahh0kEQdaqUU.mp4" },
+  { link: "videos/SaveClip.App_AQPpeVPURA6xLYb4f3ldjIBK0x2aQJs7tMBlngRdwbikM_7xUBvw5Wz_6gr6EG0bwsp-W8XVDpYzbEn5H0jn-H8VScQGV69d1K2dvgk (1).mp4" },
+  { link: "videos/SaveClip.App_AQMVF61XdwYxByx27Z8dBo4CXhHUI-hL74LmPceHuwxHzM_cDl8zf6_rRkUEArmE8__Jt-2L0j1hhxT5RuWTv4BYmmnYw2IRSedS6wM.mp4" },
+  
+];
+
+let PROJECTS_THUMBNAIL = [
+  { title: "Wielino", image: "SaveClip.App_589196459_17921436108220112_2823571289660198279_n.jpg" },
+  { title: "FarozSabil", image: "SaveClip.App_608281415_17844462966642999_3584002246719614111_n.jpg" },
+  { title: "Ayarikapi", image: "SaveClip.App_719210228_17859266850642999_1612259838915794546_n.jpg" },
+  { title: "Ayarikapi", image: "SaveClip.App_763479539_17864674875642999_7788735169367748673_n.jpg" },
+  { title: "Wielino", image: "641746047_1561256428264794_5847872806662439561_n.jpg" },
+  { title: "Inaanim", image: "INAA.png" }
+  
+];
+
+/* ===================== RENDER PROFIL & SOSIAL ===================== */
+document.getElementById("nav-name").textContent = CONFIG.name;
+document.getElementById("profile-name").textContent = CONFIG.name;
+document.getElementById("profile-role").textContent = CONFIG.role;
+document.getElementById("status-text").textContent = CONFIG.status;
+document.getElementById("avatar-img").src = CONFIG.avatar;
+document.getElementById("bio-text").textContent = CONFIG.bio;
+document.getElementById("projects-heading").textContent = CONFIG.projectsHeading;
+document.title = CONFIG.name + " — Video Editor";
+
+document.getElementById("skills-list").innerHTML = CONFIG.skills
+  .map(s => `<span class="skill-tag">${s}</span>`).join("");
+
+function showToast(msg){
+  const toast = document.getElementById("toast-msg");
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 3200);
+}
+
+function openDiscordLink(e){
+  if (e) e.preventDefault();
+  const discordId = "723016020817608814";
+  const profileUrl = "https://discord.com/users/" + discordId;
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(discordId).then(() => {
+      showToast("Discord ID (" + discordId + ") disalin ke clipboard! Membuka Discord...");
+    }).catch(() => {
+      showToast("Membuka profil Discord...");
+    });
+  } else {
+    showToast("Membuka profil Discord...");
+  }
+
+  setTimeout(() => {
+    window.open(profileUrl, "_blank");
+  }, 400);
+}
+
+function fillSocial(id, data, isDiscord){
+  const chip = document.getElementById(id);
+  if (!chip) return;
+  chip.onclick = (e) => {
+    if (isDiscord) {
+      openDiscordLink(e);
+    } else {
+      window.open(data.url, "_blank");
+    }
+  };
+}
+
+fillSocial("social-tiktok", CONFIG.socials.tiktok, false);
+fillSocial("social-instagram", CONFIG.socials.instagram, false);
+fillSocial("social-discord", CONFIG.socials.discord, true);
+
+document.getElementById("footer-links").innerHTML = `
+  <a class="footer-link fl-tiktok" href="${CONFIG.socials.tiktok.url}" target="_blank" rel="noopener"><i class="ti ti-brand-tiktok"></i>TikTok</a>
+  <a class="footer-link fl-instagram" href="${CONFIG.socials.instagram.url}" target="_blank" rel="noopener"><i class="ti ti-brand-instagram"></i>Instagram</a>
+  <a class="footer-link fl-discord" href="${CONFIG.socials.discord.url}" onclick="openDiscordLink(event)"><i class="ti ti-brand-discord"></i>Discord</a>
+`;
+document.getElementById("footer-copy").textContent = `© ${new Date().getFullYear()} · ${CONFIG.name} · Video Editor · Indonesia`;
+
+/* ===================== PENGALAMAN ===================== */
+document.getElementById("about-text").textContent = CONFIG.experience.about;
+document.getElementById("stats-row").innerHTML = CONFIG.experience.stats.map(s => `
+  <div class="stat-card">
+    <div class="stat-value">${s.value}</div>
+    <div class="stat-label">${s.label}</div>
+  </div>
+`).join("");
+
+/* Otomatis ambil thumbnail dari link (YouTube, dll) */
+function autoThumb(link){
+  let m;
+  // YouTube
+  m = link.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/))([-\w]+)/i);
+  if (m) return `https://img.youtube.com/vi/${m[1]}/maxresdefault.jpg`;
+  // MP4 lokal: tidak ada thumbnail, tampilkan placeholder gelap
+  if (/\.(mp4|webm|mov)(\?.*)?$/i.test(link)) return '';
+  return '';
+}
+
+function buildThumbCard(p, index){
+  const delay = (index % 6) * 0.06;
+  const imagePath = p.image || p.thumbnail || p.link || 'INAA.png';
+  const title = p.title || titleFromFilename(imagePath);
+
+  return `
+    <div class="project-card reveal-item tilt-card" style="transition-delay:${delay}s" onclick="openVmodal('${imagePath}', '${title}')">
+      <div class="project-thumb ratio-169">
+        <img src="${imagePath}" alt="${title}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/600x337/1a1d24/9d9d9a?text=Thumbnail+Design';">
+        <div class="project-play"><i class="ti ti-zoom-in"></i></div>
+      </div>
+      <div class="project-meta">
+        <div class="project-title">${title}</div>
+      </div>
+    </div>`;
+}
+
+/* ========= MODAL LIGHTBOX (GAMBAR / VIDEO) ========= */
+function openVmodal(link, title){
+  if (!link || link.trim() === '') return;
+  const box = document.querySelector('.vmodal-box');
+  const crop = document.getElementById('vmodal-crop');
+  const overlay = document.getElementById('vmodal');
+  crop.className = 'vmodal-crop';
+  crop.innerHTML = '';
+  if (box) box.classList.remove('img-box');
+
+  let m, html = '', cls = '';
+
+  // 1. Gambar Desain Thumbnail (PNG, JPG, WEBP, GIF, SVG)
+  if (/\.(png|jpe?g|webp|gif|svg)(\?.*)?$/i.test(link)) {
+    cls = 'img-modal';
+    if (box) box.classList.add('img-box');
+    html = `<div style="padding:16px;text-align:center;background:#090a0f;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;">
+      <img src="${link}" alt="${title || 'Desain Thumbnail'}" style="max-width:100%;max-height:80vh;border-radius:10px;object-fit:contain;box-shadow:0 10px 40px rgba(0,0,0,0.8);display:block;margin:0 auto;">
+      ${title ? `<div style="margin-top:12px;font-family:var(--font-display);font-weight:600;font-size:14px;color:#fff;">${title}</div>` : ''}
+    </div>`;
+  }
+
+  // 2. Instagram
+  if (!cls){
+    m = link.match(/instagram\.com\/(?:reel|reels|p)\/(\w+)/i);
+    if (m){ cls = 'ig'; html = `<iframe src="https://www.instagram.com/p/${m[1]}/embed" allowfullscreen></iframe>`; }
+  }
+
+  // 3. TikTok
+  if (!cls){ m = link.match(/tiktok\.com\/(?:@[\w.-]+\/video\/|v\/|embed\/v2\/)([\d]+)/i); }
+  if (m && !cls){ cls = 'tt'; html = `<iframe src="https://www.tiktok.com/embed/v2/${m[1]}" allowfullscreen></iframe>`; }
+
+  // 4. YouTube
+  if (!cls){ m = link.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/))(\w+)/i); }
+  if (m && !cls){ cls = 'yt'; html = `<iframe src="https://www.youtube.com/embed/${m[1]}?autoplay=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`; }
+
+  // 5. Drive
+  if (!cls){ m = link.match(/drive\.google\.com\/file\/d\/([\w-]+)/); }
+  if (m && !cls){ cls = 'yt'; html = `<iframe src="https://drive.google.com/file/d/${m[1]}/preview" allowfullscreen></iframe>`; }
+
+  // 6. MP4 Video
+  if (!cls && /\.(mp4|webm|mov)(\?.*)?$/i.test(link)){ cls = 'mp4'; html = `<video src="${link}" controls autoplay playsinline></video>`; }
+
+  if (!html){ window.open(link,'_blank'); return; }
+
+  crop.classList.add(cls);
+  crop.innerHTML = html;
+  overlay.classList.add('open');
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+  document.body.style.overflow = 'hidden';
+}
+
+function closeVmodal(){
+  const overlay = document.getElementById('vmodal');
+  overlay.classList.remove('visible');
+  setTimeout(() => {
+    overlay.classList.remove('open');
+    document.getElementById('vmodal-crop').innerHTML = '';
+    document.body.style.overflow = '';
+  }, 250);
+}
+
+function vmodalClose(e){ if (e.target === document.getElementById('vmodal')) closeVmodal(); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeVmodal(); });
+
+function titleFromFilename(path){
+  const file = path.split('/').pop().split('\\').pop();
+  const noExt = file.replace(/\.(png|jpe?g|webp|gif|svg|mp4|webm|mov|avi|mkv)(\?.*)?$/i, '');
+  if (/SaveClip|Instagram|Snapinst|TikTok|facebook/i.test(noExt)) {
+    return 'Desain Thumbnail';
+  }
+  return noExt
+    .replace(/[_\-]+/g, ' ')
+    .replace(/\b\w/g, c => c.toUpperCase())
+    .trim() || 'Desain Thumbnail';
+}
+
+function getAccountNameFromLink(link, customTitle){
+  if (customTitle && customTitle.trim() !== '') return customTitle;
+  if (!link || link === '#' || link.trim() === '') return 'Proyek Video';
+
+  if (/\.(mp4|webm|mov|avi|mkv)(\?.*)?$/i.test(link)) return titleFromFilename(link);
+
+  let m = link.match(/tiktok\.com\/@([\w.-]+)/i);
+  if (m) return '@' + m[1];
+
+  m = link.match(/instagram\.com\/([\.\w.-]+)\/(?:reel|reels|p)\//i);
+  if (m && !['p', 'reel', 'reels'].includes(m[1].toLowerCase())){
+    return '@' + m[1];
+  }
+
+  if (/instagram\.com\/(?:reel|reels|p)\//i.test(link)){
+    if (CONFIG && CONFIG.socials && CONFIG.socials.instagram && CONFIG.socials.instagram.url){
+      let igM = CONFIG.socials.instagram.url.match(/instagram\.com\/([\w.-]+)/i);
+      if (igM) return '@' + igM[1].replace(/\/$/, '');
+    }
+    return '@farozporto';
+  }
+
+  m = link.match(/youtube\.com\/@([\w.-]+)/i);
+  if (m) return '@' + m[1];
+
+  return customTitle || 'Proyek Video';
+}
+
+function getPlatformInfo(link){
+  if (!link || link.trim() === '') return { type: 'empty', badgeClass: '', icon: 'ti-video', label: 'Video', thumb: null };
+
+  let m;
+  m = link.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/))([\w-]+)/);
+  if (m) return {
+    type: 'youtube', badgeClass: 'youtube', icon: 'ti-brand-youtube', label: 'YouTube',
+    thumb: `https://img.youtube.com/vi/${m[1]}/maxresdefault.jpg`
+  };
+
+  m = link.match(/tiktok\.com\/(?:@[\w.-]+\/video\/|v\/|embed\/v2\/)(\d+)/);
+  if (m) return {
+    type: 'tiktok', badgeClass: 'tiktok', icon: 'ti-brand-tiktok', label: 'TikTok',
+    thumb: `https://api.microlink.io/?url=${encodeURIComponent(link)}&screenshot=true&meta=false&embed=screenshot.url`
+  };
+
+  m = link.match(/instagram\.com\/(?:reel|reels|p)\/([\w-]+)/);
+  if (m) return {
+    type: 'instagram', badgeClass: 'instagram', icon: 'ti-brand-instagram', label: 'Instagram',
+    thumb: `https://api.microlink.io/?url=${encodeURIComponent(link)}&screenshot=true&meta=false&embed=screenshot.url`
+  };
+
+  m = link.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
+  if (m) return { type: 'drive', badgeClass: '', icon: 'ti-brand-google-drive', label: 'Drive', thumb: null };
+
+  if (/\.(mp4|webm|mov)(\?.*)?$/i.test(link))
+    return { type: 'mp4', badgeClass: '', icon: 'ti-movie', label: 'Video', thumb: null };
+
+  return { type: 'link', badgeClass: '', icon: 'ti-external-link', label: 'Link', thumb: null };
+}
+
+function getInlineEmbed(link) {
+  if (!link || link.trim() === '') {
+    return {
+      cls: 'vc-empty',
+      html: `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-family:var(--font-mono);font-size:11px;text-align:center;padding:20px;">
+        <i class="ti ti-video" style="font-size:32px;margin-bottom:10px;color:var(--accent);"></i>
+        <span>Tempel link video di sini</span>
+      </div>`
+    };
+  }
+
+  let m;
+  // TikTok (desktop & mobile links)
+  m = link.match(/(?:tiktok\.com\/(?:@[\w.-]+\/video\/|v\/|embed\/v2\/|t\/)|vt\.tiktok\.com\/|vm\.tiktok\.com\/)(\d+|[\w-]+)/i);
+  if (m) {
+    const videoId = m[1];
+    const embedUrl = /^\d+$/.test(videoId)
+      ? `https://www.tiktok.com/embed/v2/${videoId}`
+      : link;
+    return {
+      cls: 'vc-tt',
+      html: `<iframe src="${embedUrl}" scrolling="no" style="overflow:hidden;" allow="fullscreen" allowfullscreen></iframe>`
+    };
+  }
+
+  // Instagram (Reel/Reels/Post - handles mobile query params like ?igsh=...)
+  m = link.match(/instagram\.com\/(?:reel|reels|p)\/([\w-]+)/i);
+  if (m) {
+    return {
+      cls: 'vc-ig',
+      html: `<iframe src="https://www.instagram.com/p/${m[1]}/embed" scrolling="no" style="overflow:hidden;" allowfullscreen></iframe>`
+    };
+  }
+
+  // YouTube Shorts / Video (rel=0 removes related video overlay)
+  m = link.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/))([\w-]+)/i);
+  if (m) {
+    return {
+      cls: 'vc-yt',
+      html: `<iframe src="https://www.youtube.com/embed/${m[1]}?rel=0&modestbranding=1" scrolling="no" style="overflow:hidden;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+    };
+  }
+
+  // Google Drive
+  m = link.match(/drive\.google\.com\/file\/d\/([\w-]+)/i);
+  if (m) {
+    return {
+      cls: 'vc-yt',
+      html: `<iframe src="https://drive.google.com/file/d/${m[1]}/preview" scrolling="no" style="overflow:hidden;" allowfullscreen></iframe>`
+    };
+  }
+
+  // Direct MP4 / WebM / MOV
+  if (/\.(mp4|webm|mov|avi|mkv)(\?.*)?$/i.test(link)) {
+    return {
+      cls: 'vc-mp4',
+      html: `<video src="${link}" controls playsinline preload="metadata" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;background:#000;"></video>`
+    };
+  }
+
+  return {
+    cls: 'vc-yt',
+    html: `<iframe src="${link}" scrolling="no" style="overflow:hidden;" allowfullscreen></iframe>`
+  };
+}
+
+function buildVideoCard(p, index){
+  const delay = (index % 6) * 0.06;
+  const accountName = getAccountNameFromLink(p.link, p.title);
+  const embed = getInlineEmbed(p.link);
+
+  let ratioClass = 'ratio-916';
+  let cardClass = 'card-916';
+
+  if (p.ratio === '16:9' || p.ratio === '16/9' || p.ratio === 'horizontal') {
+    ratioClass = 'ratio-169';
+    cardClass = 'card-169';
+  } else if (p.ratio === '9:16' || p.ratio === '9/16' || p.ratio === 'vertical') {
+    ratioClass = 'ratio-916';
+    cardClass = 'card-916';
+  } else if (p.link && (p.link.includes('youtube.com/watch') || p.link.includes('youtu.be/')) && !p.link.includes('shorts')) {
+    ratioClass = 'ratio-169';
+    cardClass = 'card-169';
+  }
+
+  let html = embed.html;
+  if (/\.(mp4|webm|mov|avi|mkv)(\?.*)?$/i.test(p.link)) {
+    html = `<video src="${p.link}" controls playsinline preload="metadata" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;background:#000;" onloadedmetadata="if(this.videoWidth > this.videoHeight){ const pc=this.closest('.project-card'); const vc=this.closest('.video-card'); if(pc&&vc){ pc.classList.add('card-169'); pc.classList.remove('card-916'); vc.classList.add('ratio-169'); vc.classList.remove('ratio-916'); } }"></video>`;
+  }
+
+  return `
+    <div class="project-card reveal-item ${cardClass}" style="transition-delay:${delay}s">
+      <div class="video-card tilt-card ${ratioClass} ${embed.cls}">
+        ${html}
+      </div>
+      <div class="video-card-title">${accountName}</div>
+    </div>`;
+}
+
+function renderProjects(){
+  document.getElementById("video-grid").innerHTML = PROJECTS_VIDEO
+    .map((p, i) => buildVideoCard(p, i)).join("");
+
+  document.getElementById("thumbnail-grid").innerHTML = PROJECTS_THUMBNAIL
+    .map((p, i) => buildThumbCard(p, i)).join("");
+  initScrollReveal();
+}
+
+function applyFilter(filter){
+  document.getElementById("video-section").style.display = (filter === "all" || filter === "video") ? "" : "none";
+  document.getElementById("thumbnail-section").style.display = (filter === "all" || filter === "thumbnail") ? "" : "none";
+}
+
+/* ========= SCROLL PROGRESS BAR ========= */
+window.addEventListener('scroll', () => {
+  const el = document.getElementById('scroll-bar');
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  if (el) el.style.width = Math.min(pct, 100) + '%';
+}, { passive: true });
+
+/* ========= CURSOR GLOW ========= */
+const cursorEl = document.getElementById('cursor-glow');
+document.addEventListener('mousemove', e => {
+  cursorEl.style.opacity = '1';
+  // Account for html zoom: 1.4 scaling
+  cursorEl.style.left = (e.clientX / 1.4) + 'px';
+  cursorEl.style.top = (e.clientY / 1.4) + 'px';
+}, { passive: true });
+document.addEventListener('mouseleave', () => { cursorEl.style.opacity = '0'; });
+document.addEventListener('mouseleave', () => { cursorEl.style.opacity = '0'; });
+
+/* ========= 3D TILT ON CARDS ========= */
+function initTilt(){
+  document.querySelectorAll('.video-card, .tilt-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width  - 0.5;
+      const y = (e.clientY - r.top)  / r.height - 0.5;
+      card.style.transform = `perspective(600px) rotateY(${x*14}deg) rotateX(${-y*14}deg) scale(1.025)`;
+      card.style.boxShadow = `${-x*18}px ${y*18}px 40px rgba(61,142,242,0.22)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+      card.style.boxShadow = '';
+    });
+  });
+}
+
+/* ========= ANIMATED STAT COUNTERS ========= */
+function animateCounters(){
+  document.querySelectorAll('.stat-value').forEach(el => {
+    if (el.dataset.animated) return;
+    el.dataset.animated = '1';
+    const raw = el.textContent.trim();
+    const num = parseFloat(raw);
+    const suffix = raw.replace(/[\d.]/g,'');
+    if (isNaN(num)) return;
+    let start = 0;
+    const dur = 1200;
+    const step = ts => {
+      if (!start) start = ts;
+      const p = Math.min((ts - start) / dur, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      el.textContent = (num <= 10 ? Math.round(ease * num) : Math.round(ease * num * 10) / 10) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+}
+
+/* ========= HERO PHOTO PARALLAX ========= */
+window.addEventListener('scroll', () => {
+  const photo = document.querySelector('.hero-photo img');
+  if (photo) photo.style.transform = `translateY(${window.scrollY * 0.08}px)`;
+}, { passive: true });
+
+/* ========= SECTION OBSERVER (counter trigger) ========= */
+const statsObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) animateCounters(); });
+}, { threshold: 0.4 });
+const statsRow = document.getElementById('stats-row');
+if (statsRow) statsObs.observe(statsRow);
+
+/* ========= INIT TILT AFTER RENDER ========= */
+const origInitScrollReveal = initScrollReveal;
+function initScrollReveal(){
+  origInitScrollReveal();
+  setTimeout(initTilt, 50);
+}
+
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    applyFilter(btn.dataset.filter);
+  });
+});
+
+function parseCsv(text){
+  const lines = text.trim().split("\n");
+  const headers = lines[0].split(",").map(h => h.trim().toLowerCase());
+  return lines.slice(1).map(line => {
+    const cells = line.split(",").map(c => c.trim());
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = cells[i] || "");
+    return obj;
+  });
+}
+
+async function loadProjects(){
+  if (CONFIG_SHEET_CSV_URL){
+    try{
+      const res = await fetch(CONFIG_SHEET_CSV_URL);
+      const text = await res.text();
+      const rows = parseCsv(text);
+      PROJECTS_VIDEO = rows.filter(r => r.type === "video").map(r => ({ title: r.title, link: r.link }));
+      PROJECTS_THUMBNAIL = rows.filter(r => r.type === "thumbnail").map(r => ({ title: r.title, thumbnail: r.thumbnail, link: r.link }));
+    }catch(e){ console.error("Gagal ambil data dari Google Sheet, pakai data contoh.", e); }
+  }
+  renderProjects();
+  applyFilter("all");
+}
+loadProjects();
+
+/* ===================== REVEAL ON SCROLL ===================== */
+function initScrollReveal(){
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        entry.target.classList.add("reveal-visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: "0px 0px -40px 0px" });
+
+  document.querySelectorAll(".reveal, .reveal-stagger").forEach(el => {
+    if (!el.classList.contains("reveal-visible")) observer.observe(el);
+  });
+}
+initScrollReveal();
+</script>
+</body>
+</html>
