@@ -66,7 +66,6 @@ export default function VideoCard({ p, index }) {
           <div dangerouslySetInnerHTML={{ __html: embed.html }} style={{ width: '100%', height: '100%' }} />
         )}
       </div>
-      <div className="video-card-title">{accountName}</div>
     </div>
   );
 }
