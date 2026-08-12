@@ -40,7 +40,6 @@ export default function ProjectsSection({ onOpenModal }) {
 
       {(filter === 'all' || filter === 'video') && (
         <div id="video-section" className="reveal-stagger reveal-visible">
-          <div className="subsection-label">Video</div>
           <div className="project-grid video-grid" id="video-grid">
             {PROJECTS_VIDEO.map((p, index) => (
               <VideoCard p={p} index={index} key={index} />
@@ -51,7 +50,6 @@ export default function ProjectsSection({ onOpenModal }) {
 
       {(filter === 'all' || filter === 'thumbnail') && (
         <div id="thumbnail-section" className="reveal-stagger reveal-visible">
-          <div className="subsection-label">Thumbnail</div>
           <div className="project-grid thumb-grid" id="thumbnail-grid">
             {PROJECTS_THUMBNAIL.map((p, index) => (
               <ThumbCard p={p} index={index} key={index} onOpenModal={onOpenModal} />
